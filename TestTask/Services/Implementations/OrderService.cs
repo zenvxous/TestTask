@@ -29,6 +29,9 @@ public class OrderService : IOrderService
     public  async Task<List<Order>> GetOrders()
     {
         var orders = await _context.Orders
+            .Include(o => o.User)
+            .Where(o => o.User.Status == UserStatus.Active)
+            .OrderBy(o => o.CreatedAt)
             .ToListAsync();
         
         return orders;

@@ -18,6 +18,7 @@ public class UserService : IUserService
     public async Task<User> GetUser()
     {
         var userWithMaxValue = await _context.Users
+            .Include(u => u.Orders)
             .Where(u => u.Orders.Any(o => o.Status == OrderStatus.Delivered && o.CreatedAt.Year == 2003))
             .Select(u => new
             {
@@ -34,7 +35,11 @@ public class UserService : IUserService
 
     public async Task<List<User>> GetUsers()
     {
-        // temp
-        return new List<User>();
+        var users = await _context.Users
+            .Include(u => u.Orders)
+            .Where(u => u.Orders.Any(o => o.Status == OrderStatus.Paid && o.CreatedAt.Year == 2010))
+            .ToListAsync();
+        
+        return users;
     }
 }
